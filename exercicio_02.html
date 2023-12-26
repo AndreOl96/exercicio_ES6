@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ExerciciosES6 - Exercicio 01</title>
+  </head>
+  <body>
+    <script>
+      //Ligação API método: XMLHttpRequest
+      const xhr = new XMLHttpRequest();
+      const apiUrl = "https://cat-fact.herokuapp.com/facts/";
+
+      xhr.open("GET", apiUrl, true);
+
+      xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          // Sucesso na solicitação
+          const responseData = JSON.parse(xhr.responseText);
+          console.log(responseData);
+        } else {
+          // Erro na solicitação
+          console.error("Erro na solicitação. Status:", xhr.status);
+        }
+      };
+
+      xhr.onerror = function () {
+        // Erro de rede
+        console.error("Erro ao tentar acessar a API.");
+      };
+
+      xhr.send();
+
+      //Ligação API método: FETCH e Resolve do conteudo obtido
+      function fetchCatFacts() {
+        const apiUrl = "https://cat-fact.herokuapp.com/facts/";
+
+        return new Promise((resolve, reject) => {
+          fetch(apiUrl)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(
+                  `Erro na solicitação. Status: ${response.status}`
+                );
+              }
+              return response.json();
+            })
+            .then((data) => {
+              resolve(data);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      }
+
+      fetchCatFacts()
+        .then((catFacts) => {
+          console.log(catFacts);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      // Função para ler todas as frases da propriedade text
+      function printTexts(apiResponse) {
+        apiResponse.forEach((item) => {
+          if (item.text) {
+            console.log(item.text);
+          }
+        });
+      }
+
+      // Uso da função fetchCatFacts
+      fetchCatFacts()
+        .then((catFacts) => {
+          printTexts(catFacts);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    </script>
+  </body>
+</html>
